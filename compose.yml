@@ -1,0 +1,34 @@
+version: "3"
+services:
+  qemu:
+    container_name: qemu
+    # image: qemux/qemu-docker
+    build: build
+    environment:
+      RAM_SIZE: "1G"
+      CPU_CORES: "2"
+      DISK_SIZE: "16G"
+      # DISPLAY: "none"
+      # BOOT: "https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.1-x86_64.iso"
+      # https://wiki.almalinux.org/documentation/installation-guide.html#requirements
+      BOOT: "https://repo.almalinux.org/almalinux/9/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso"
+    volumes:
+      - storage:/storage
+      - ./AlmaLinux-9-latest-x86_64-boot.iso:/storage/boot.iso
+      # https://wiki.almalinux.org/cloud/Generic-cloud.html
+      # # https://repo.almalinux.org/almalinux/8/cloud/x86_64/images/AlmaLinux-8-GenericCloud-latest.x86_64.qcow2
+      # - ./AlmaLinux-8-GenericCloud-latest.x86_64.qcow2:/storage/data.qcow2
+    devices:
+      - /dev/kvm
+    device_cgroup_rules:
+      - 'c *:* rwm'
+    cap_add:
+      - NET_ADMIN
+    ports:
+      # noVNC
+      - 8006:8006
+    stop_grace_period: 2m
+    restart: on-failure
+
+volumes:
+  storage:
